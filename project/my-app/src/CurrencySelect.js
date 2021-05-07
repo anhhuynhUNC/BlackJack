@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import ShowCard from './CardReal'
 import Hand from './Hand';
 import Card from './Card';
-import { Button, Form,Field } from 'react-bulma-components';
+import { Button, Form, Field } from 'react-bulma-components';
 
 function CurrencySelect(props) {
     let select = document.createElement('select');
@@ -24,9 +24,10 @@ function CurrencySelect(props) {
         <div >
             <Form.Field>
                 <Form.Label>Select Your Currencies</Form.Label>
-                <Form.Select id="selectCurrency" onChange={(event) => {
-                    setVal(event.target.value);
-                }}></Form.Select>
+                <div class='select'>
+                    <select id="selectCurrency" onChange={(event) => {
+                        setVal(event.target.value);
+                    }}></select></div>
             </Form.Field>
             <SelectButton callBack={props.callBack} value={testVal} callBack2={props.callBack2} callBack3={props.callBack3} />
         </div>
