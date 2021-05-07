@@ -147,7 +147,7 @@ function PlayerHand(props) {
                             //playerHand2 = controller.playerHand2
 
                             controller.playerHand2.getHand().push(playerHand.getHand()[1]);
-                            controller.playerHand.getHand().shift();
+                            controller.playerHand.getHand().pop();
 
                             deck.deal(controller.playerHand);
                             deck.deal(controller.playerHand2);
