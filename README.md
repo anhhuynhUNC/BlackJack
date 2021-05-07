@@ -11,6 +11,7 @@ When you start the game, there are four options to take. These are:
 - Stand
 - Double Down
 - Split
+
 The game works as follow: You have to begin by making a bet. This will be subtracted from your starting pot. Then you choose one of the four options:
 - If you Hit, one more card is dealt to your hand. You can keep hitting until you Stand or go Bust - over 21.
 - If you Stand, the round ends and your hand value is compared to the dealer.
