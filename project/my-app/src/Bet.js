@@ -14,15 +14,73 @@ const { Input, Field, Control, Label } = Form;
 
 function Bet(props) {
     let [pot, setPot] = useState(props.pot);
-    let [currentBet, setBet] = useState(0);
+    let [currentBet, setBet] = useState(props.controller.bet);
     let [hasBet, setHasBet] = useState(props.controller.hasBet);
+    let [secondaryBet, setBet2] = useState(undefined);
     let realPot = props.pot;
+    if (hasBet) {
+        let res = document.getElementsByClassName('freeCard');
 
+        //console.log(res.length);
+        for (let i = 0; i < res.length; i++) {
+            res[i].classList.remove('hidden');
+        }
+
+        let double = document.getElementById('doubleButton');
+        if (double != undefined && double != null) {
+            double.addEventListener('click', () => {
+
+                let addedBet;
+                if (props.controller.bet <= props.controller.pot) {
+                    props.controller.pot -= props.controller.bet;
+                    addedBet = props.controller.bet;
+                } else {
+                    addedBet = props.controller.pot
+                    props.controller.pot = 0;
+                }
+
+                props.controller.bet += addedBet;
+
+
+                setPot(props.controller.pot)
+                setBet(props.controller.bet)
+
+            });
+        }
+
+        let split = document.getElementById('splitButton')
+
+        if (props.controller.playerHand.getHand()[0].value == props.controller.playerHand.getHand()[1].value) {
+
+            if (split != null && split != undefined) {
+                split.addEventListener('click', () => {
+
+                    let addedBet;
+                    if (props.controller.bet <= props.controller.pot) {
+                        props.controller.pot -= props.controller.bet;
+                        addedBet = props.controller.bet;
+                    } else {
+                        addedBet = props.controller.pot
+                        props.controller.pot = 0;
+                    }
+
+                    setBet2(addedBet);
+                    setPot(pot - addedBet)
+                    props.controller.bet2 = addedBet;
+
+
+
+
+                })
+            }
+        }
+
+    }
 
     return (
         <div>
             <h2>Pot: {pot + " " + props.controller.currency}</h2>
-            <h2> Current: {currentBet}</h2>
+            <h2> Current: {currentBet} {secondaryBet}</h2>
             {!hasBet ? <div>
 
                 <Columns>
@@ -42,13 +100,17 @@ function Bet(props) {
                                             document.getElementById('bet').value = '';
                                             document.getElementById('bet').placeholder = "Not Valid";
                                         } else {
+
                                             document.getElementById('bet').placeholder = '';
                                             setPot(pot - bet);
                                             setBet(bet);
+
+
+
                                             realPot = realPot - bet;
                                             props.controller.setPot(realPot);
                                             props.controller.setBet(bet);
-
+                                            //props.showBet();
                                             props.controller.hasBet = true;
 
                                             //Unhide (Does this do anything?)
@@ -58,10 +120,7 @@ function Bet(props) {
 
                                             let res = document.getElementsByClassName('freeCard');
 
-                                            console.log(res.length);
-                                            for (let i = 0; i < res.length; i++) {
-                                                res[i].classList.remove('hidden');
-                                            }
+
 
                                             //manual load images
                                             res[0].src = require('./assets/playingCard/' + props.controller.houseHand.getHand()[1].value + "_" + props.controller.houseHand.getHand()[1].suit + '_white.png').default;
@@ -69,6 +128,7 @@ function Bet(props) {
                                             res[2].src = require('./assets/playingCard/' + props.controller.playerHand.getHand()[1].value + "_" + props.controller.playerHand.getHand()[1].suit + '_white.png').default;
 
                                             setHasBet(props.controller.hasBet)
+
                                         }
                                     }
                                     }>Place Bet</Button>
@@ -80,10 +140,14 @@ function Bet(props) {
                 </Columns>
             </div> : <div></div>}
 
-            {hasBet ? <Button onClick={() => { if (props.controller.inPlay) { props.callBack() } }}>Continue</Button> : <span></span>}
+            {hasBet ? <Button onClick={() => { if (props.controller.inPlay && props.controller.inPlay2) { props.callBack() } }}>Continue</Button> : <span></span>}
         </div>
     )
 
 }
 
-export default Bet
+function sthFin() {
+    return 1;
+}
+
+export { Bet, sthFin };

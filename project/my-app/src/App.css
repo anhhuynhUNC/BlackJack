@@ -102,11 +102,16 @@ body{
   margin: 0; height: 100%; 
   overflow-x: hidden;
   background-color: rgb(210,238,255);
+  font-size: 14px;
+}
+#secondButtons{
+  display: inline;
+  margin-left: 100px;
 }
 
 #trivia{
  
-  bottom:150px;
+  bottom:120px;
  position: relative;
  width: 20%;
  margin-right: 10%;
@@ -114,10 +119,10 @@ body{
 }
 
 #joke{
-  bottom:150px;
+  bottom:120px;
  position: relative;
  width: 20%;
- margin-left: 10%;
+ margin-left: 7%;
  float: left;
 }
 
@@ -151,10 +156,43 @@ body{
   top: 40%;
   color: antiquewhite;
 }
-#topContainer{
-  opacity: 1;
+body > h1,h2{
+  font-family: 'myFont';
 }
 
+.button {
+  opacity: 1;
+  font-family: 'myFont';
+}
+
+.title{
+  font-family: 'myFont'
+}
+
+#menuButton{
+  font-family: 'calibri';
+}
+
+#menuButton1{
+  font-family: 'calibri';
+}
+#menuButton2{
+  font-family: 'calibri';
+}
+
+
+
+@font-face {
+  font-family: 'myFont';
+  src: local('myFont'), url(./assets/fonts/slkscr.ttf) format('truetype');
+
+}
+
+@font-face{
+  
+  font-family: 'myFontb';
+  src: local('myFontb'), url(./assets/fonts/slkscrb.ttf) format('truetype');
+}
 
 
 /* Add Animation */

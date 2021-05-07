@@ -11,7 +11,7 @@ import axios from 'axios'
 
 import Deck from './Deck'
 import Hand from './Hand';
-import Bet from './Bet';
+import { Bet } from './Bet';
 import Controller from './Controller'
 import PlayerHand from './PlayerHand'
 
@@ -44,6 +44,10 @@ deck.deal(houseHand);
 deck.deal(playerHand);
 deck.deal(playerHand);
 
+//SPLIT TEST
+// playerHand.getHand()[0].value = 5;
+// playerHand.getHand()[1].value = 5;
+
 houseHand.getHand()[0].hidden = true //set hide
 houseHand.getHand()[1].hidden = true
 playerHand.getHand()[0].hidden = true
@@ -56,6 +60,8 @@ let leaderboard = []; //Initial load ld
 let lbToggle = false;
 
 let hasDone = false;
+let hasDouble = false;
+let userHigh = 0;
 
 let hasRetrieved = false;
 function App() {
@@ -64,6 +70,9 @@ function App() {
   let [currencies, setCurrency] = useState({});
   let [realLeaderboard, setLb] = useState([]);
   let [hasPassLb, setLbMode] = useState(2500)
+  let [isSplit, setSplit] = useState(false);
+
+  let [currentBet, setBet] = useState(0);
 
   //SET CURRENCY API (CHANGE TO FALSE TO REVEAL)
   let [hasSetPot, setRealPot] = useState(false)
@@ -74,11 +83,12 @@ function App() {
     if (user) {
       setLogin(true);
       setUser(user);
+
       if (!hasDone) {
-        getLb()
+        getLb(user)
         hasDone = true;
       }
-     
+
 
       // User is signed in.
     } else {
@@ -87,6 +97,9 @@ function App() {
       //startFirebaseUI('#loginUi')
     }
   });
+
+
+
 
   let [hasLogin, setLogin] = useState(false);
   let [user, setUser] = useState(null);
@@ -125,7 +138,7 @@ function App() {
   }
 
   function updateUserTheme(name, val) {
-let obj = {};
+    let obj = {};
     obj[name] = val;
 
     return firebase.database().ref('Theme').update(obj);
@@ -133,7 +146,7 @@ let obj = {};
   }
 
   //Get leaderboard
-  async function getLb() {
+  async function getLb(user) {
     const db = firebase.database();
     const scoreRef = db.ref('Leaderboard');
     let temp2 = [];
@@ -144,6 +157,15 @@ let obj = {};
       let anotherVar = true
       snap.forEach(function (data) {
         temp.push("" + data.key + ": " + data.val());
+
+        //Set User lowest Lb
+        if (user != null) {
+
+          if (data.key == user.displayName) {
+
+            userHigh = data.val();
+          }
+        }
 
         //Set lowest Lb
         if (anotherVar) {
@@ -161,6 +183,7 @@ let obj = {};
       // alert(controller.pot + 'bet: ' + controller.bet)
       //setLbMode(controller.lowestScore);
       setLb(temp2);
+
 
     })
 
@@ -180,12 +203,12 @@ let obj = {};
     });
     setCurrency(Object.keys(options.data.response.fiats));
     tempCur = options.data.response.fiats;
-    console.log(currencies);
+
     fillCurrency();
 
     return options.data.response.fiats;
   }
-  
+
 
   //CALLBACKS
   //Callback for exchange currency
@@ -225,6 +248,13 @@ let obj = {};
     return Math.round(options.data.result);
   }
 
+  //
+  function setDouble2() {
+    hasDouble = false;
+  }
+
+
+
   //Skip currency
   function skip() {
     controller.pot = 2500;
@@ -237,25 +267,28 @@ let obj = {};
   //FEtch
   function fillCurrency() {
     //Fill currency
-   
+
     let select = document.getElementById('selectCurrency');
     // let list = select.options;
+    if (select != undefined && select!= null) {
+      for (let i = 0; i < currencies.length; i++) {
+        let option = document.createElement('option');
+        option.value = currencies[i];
+        option.text = currencies[i];
 
-    for (let i = 0; i < currencies.length; i++) {
-      let option = document.createElement('option');
-      option.value = currencies[i];
-      option.text = currencies[i];
-
-      select.add(option)
+        select.add(option)
+      }
     }
   }
+
 
   //Dealing next hand funct
   function test() {
     controller.nextDeal();
-    if (controller.pot === 0) {
+    if (controller.pot <= 0) {
       controller.gameOver();
     }
+    //setDouble2(false);
     setTest(!superTest);
   }
 
@@ -263,7 +296,7 @@ let obj = {};
   function restart() {
     controller.restart();
     controller.pot = newPot;
-
+    //setDouble2(false);
     setTest(!superTest);
   }
   //modal settings
@@ -276,10 +309,9 @@ let obj = {};
       <div className="App">
         <Heading>Black Jack</Heading>
 
-        <PlayerHand hand={controller.playerHand} deck={controller.deck} handHouse={controller.houseHand} controller={controller} pot={controller.pot} />
+        <PlayerHand hand={controller.playerHand} deck={controller.deck} handHouse={controller.houseHand} controller={controller} pot={controller.pot} setDouble2={setDouble2} />
 
         <Bet pot={controller.pot} controller={controller} callBack={test} />
-
       </div>
     )
   }
@@ -296,19 +328,20 @@ let obj = {};
           {!hasSetPot ? <div id='menuContainer'>
 
             <Menu />
-            <CurrencySelect currencies={currencies} callBack={exchange} callBack2={skip} callBack3={getCurrency}/>
+            <CurrencySelect currencies={currencies} callBack={exchange} callBack2={skip} callBack3={getCurrency} />
           </div>
             :
             <div>
-              <div id='lostModal'> <h1>You ran out of Money!</h1>
-                {(controller.highScore > hasPassLb) ? <h2 id='modalSub'>You have made it into the Leaderboards. Submit Score?</h2> : <p></p>}
-                {(controller.highScore > hasPassLb) ? <Button onClick={() => {
+              <div id='lostModal'> <Heading>You ran out of Money!</Heading>
+                {(controller.highScore > controller.lowestScore && controller.highScore > userHigh) ? <h2 id='modalSub'>You have made it into the Leaderboards. Submit Score?</h2> : <p></p>}
+                {(controller.highScore > controller.lowestScore && controller.highScore > userHigh) ? <Button onClick={() => {
                   if (controller.currency === 'USD') {
                     writeUserData(user.displayName, controller.highScore)
+                    userHigh = controller.highScore
                   } else {
-                    exchangeBack().then(val =>  writeUserData(user.displayName, val) )
-                      //writeUserData(user.displayName, val))
-                  
+                    exchangeBack().then(val => { writeUserData(user.displayName, val); userHigh = val })
+                    //writeUserData(user.displayName, val))
+
 
                   }
                 }}>Submit</Button> : <span></span>}
@@ -341,7 +374,7 @@ let obj = {};
                 <RenderHelp />
                 <div id='trivia'>
                   <Trivia num={controller.playerHand.getHandValue()} controller={controller} />
-                  <Button onClick={() => console.log(hasSetPot)}>BBBBB</Button>
+                  <Button>BBBBB</Button>
 
                 </div>
                 <div id='joke'>

@@ -15,17 +15,35 @@ export default class Controller {
         this.currency = "USD";
         this.test = 1000;
 
-        this.test2 = [1,2,4,5];
+        this.test2 = [1, 2, 4, 5];
         this.lowestScore = 2500;
         this.highScore = this.pot;
+
+        //second Kit
+        this.playerHand2 = null;
+        this.splitMode = false;
+        this.inPlay2 = true; //always true if no split
+        this.hasSet2 = true;
+        this.hasSet1 = false;
+        this.bet2 = 0;
     }
 
     setHouse() {
-        if (this.houseHand.getHandValue() >= 17) {
-            this.checkWin();
-        } else {
-            this.dealHouse();
+        if (!this.splitMode) {
+            if (this.houseHand.getHandValue() >= 17) {
+                this.checkWin();
+            } else {
+                this.dealHouse();
 
+            }
+        } else {
+            if (this.hasSet1 && this.hasSet2) {
+                if (this.houseHand.getHandValue() >= 17) {
+                    this.checkWin();
+                } else {
+                    this.dealHouse();
+                }
+            }
         }
     }
 
@@ -41,31 +59,83 @@ export default class Controller {
     }
 
     checkWin() {
-        if (this.houseHand.getHandValue() > this.playerHand.getHandValue() && this.houseHand.getHandValue() <= 21) {
+        if (!this.splitMode) {
+            if (this.houseHand.getHandValue() > this.playerHand.getHandValue() && this.houseHand.getHandValue() <= 21) {
 
-        } else if (this.houseHand.getHandValue() < this.playerHand.getHandValue() || this.houseHand.getHandValue() > 21) {
-            this.win = true;
-            if (this.playerHand.getHandValue() === 21) {
-                this.pot += this.bet;
-                this.pot += this.bet * 1.5;
-                Math.round(this.pot)
-               
-                if(this.pot > this.highScore){
-                    this.highScore = this.pot;
+            } else if (this.houseHand.getHandValue() < this.playerHand.getHandValue() || this.houseHand.getHandValue() > 21) {
+                this.win = true;
+                if (this.playerHand.getHandValue() === 21) {
+                    this.pot += this.bet;
+                    this.pot += this.bet * 1.5;
+                    Math.round(this.pot)
+
+                    if (this.pot > this.highScore) {
+                        this.highScore = this.pot;
+                    }
+                } else {
+                    this.pot += (this.bet + this.bet);
+                    if (this.pot > this.highScore) {
+                        this.highScore = this.pot;
+                    }
                 }
             } else {
-                this.pot += (this.bet + this.bet);
-                if(this.pot > this.highScore){
-                    this.highScore = this.pot;
+                this.pot += this.bet;
+            }
+        } else {
+            if (this.playerHand.getHandValue() <= 21) {
+                if (this.houseHand.getHandValue() > this.playerHand.getHandValue() && this.houseHand.getHandValue() <= 21) {
+
+                } else if (this.houseHand.getHandValue() < this.playerHand.getHandValue() || this.houseHand.getHandValue() > 21) {
+                    this.win = true;
+                    if (this.playerHand.getHandValue() === 21) {
+                        this.pot += this.bet;
+                        this.pot += this.bet * 1.5;
+                        Math.round(this.pot)
+
+                        if (this.pot > this.highScore) {
+                            this.highScore = this.pot;
+                        }
+                    } else {
+
+                        this.pot += (this.bet + this.bet);
+                        if (this.pot > this.highScore) {
+                            this.highScore = this.pot;
+                        }
+                    }
+                } else {
+
+                    this.pot += this.bet;
+                }
+            }
+            if (this.playerHand2.getHandValue() <= 21) {
+                if (this.houseHand.getHandValue() > this.playerHand2.getHandValue() && this.houseHand.getHandValue() <= 21) {
+
+                } else if (this.houseHand.getHandValue() < this.playerHand2.getHandValue() || this.houseHand.getHandValue() > 21) {
+                    this.win = true;
+                    if (this.playerHand.getHandValue() === 21) {
+                        this.pot += this.bet2;
+                        this.pot += this.bet2 * 1.5;
+                        Math.round(this.pot)
+
+                        if (this.pot > this.highScore) {
+                            this.highScore = this.pot;
+                        }
+                    } else {
+
+                        this.pot += (this.bet2 + this.bet2);
+                        if (this.pot > this.highScore) {
+                            this.highScore = this.pot;
+                        }
+                    }
+                } else {
+
+                    this.pot += this.bet2;
                 }
             }
 
 
-        } else {
-            this.pot += this.bet;
 
         }
-
     }
 
     checkLose() {
@@ -113,26 +183,31 @@ export default class Controller {
         this.houseHand = new Hand();
         this.playerHand = new Hand();
         this.deck.deal(this.houseHand);
-        this.deck.deal(this.houseHand); 
+        this.deck.deal(this.houseHand);
         this.deck.deal(this.playerHand);
         this.deck.deal(this.playerHand);
-        
-        this.houseHand.getHand()[0].hidden = true   
+
+        this.houseHand.getHand()[0].hidden = true
         this.houseHand.getHand()[0].isFirstHidden = true         //Force hide first house
         this.houseHand.getHand()[1].hidden = true                //
         this.playerHand.getHand()[0].hidden = true               //
         this.playerHand.getHand()[1].hidden = true               //set hide
-       
+
 
         this.win = false;
         this.bet = 0;
         this.inPlay = false;
         this.hasBet = false;
 
-
+        this.playerHand2 = null;
+        this.splitMode = false;
+        this.inPlay2 = true; //always true if no split
+        this.hasSet2 = true;
+        this.hasSet1 = false;
+        this.bet2 = 0;
     }
 
-    restart(){
+    restart() {
         this.deck = new Deck();
         this.deck.shuffle();
         this.deck.shuffle();
@@ -141,16 +216,16 @@ export default class Controller {
         this.houseHand = new Hand();
         this.playerHand = new Hand();
         this.deck.deal(this.houseHand);
-        this.deck.deal(this.houseHand); 
+        this.deck.deal(this.houseHand);
         this.deck.deal(this.playerHand);
         this.deck.deal(this.playerHand);
-        
-        this.houseHand.getHand()[0].hidden = true   
+
+        this.houseHand.getHand()[0].hidden = true
         this.houseHand.getHand()[0].isFirstHidden = true         //Force hide first house
         this.houseHand.getHand()[1].hidden = true                //
         this.playerHand.getHand()[0].hidden = true               //
         this.playerHand.getHand()[1].hidden = true               //set hide
-       
+
 
         this.win = false;
         this.bet = 0;
@@ -159,9 +234,16 @@ export default class Controller {
 
         this.test = 1000;
 
-        this.test2 = [1,2,4,5];
+        this.test2 = [1, 2, 4, 5];
         this.lowestScore = 2500;
         this.highScore = this.pot;
 
+
+        this.playerHand2 = null;
+        this.splitMode = false;
+        this.inPlay2 = true; //always true if no split
+        this.hasSet2 = true;
+        this.hasSet1 = false;
+        this.bet2 = 0;
     }
 }

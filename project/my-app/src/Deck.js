@@ -1,45 +1,49 @@
-import Card from './Card'
-import Hand from './Hand'
+import React from 'react';
+import Deck from './Deck'
+import { useEffect, useState } from 'react';
+import ShowCard from './CardReal'
+import Hand from './Hand';
+import Card from './Card';
+import { Button, Form,Field } from 'react-bulma-components';
 
-export default class Deck {
-    constructor()  {
-        this.size = 52;
-        this.deck = [];
+function CurrencySelect(props) {
+    let select = document.createElement('select');
+    // let list = select.options;
+    // console.log(props.currencies)
+    // for(let i = 0; i < props.currencies.length; i ++){
+    //     let option = document.createElement('option');
+    //     option.value = props.currencies[i];
+    //     option.text = props.currencies[i];
 
+    //     select.add(option)
+    // }
+    let x = 10;
+    let [testVal, setVal] = useState("AED");
 
-        for(let i = 1; i < 14; i ++){
-            this.deck.push(new Card(i,'spades'))
-        }
-
-        for(let i = 1; i < 14; i ++){
-            this.deck.push(new Card(i,'clubs'))
-        }
-
-        for(let i = 1; i < 14; i ++){
-            this.deck.push(new Card(i,'diamonds'))
-        }
-
-        for(let i = 1; i < 14; i ++){
-            this.deck.push(new Card(i,'hearts'))
-        }
-
-
-
-    }
-
-    shuffle(){
-        for(let i = this.deck.length - 1; i > 0; i --){
-            let j = Math.floor (Math.random() * (i + 1));
-            let temp = this.deck[j];
-            this.deck[j] = this.deck[i];
-           this.deck[i] = temp;
-        }
-
-
-    }
-
-    deal(hand){
-        hand.addCard(this.deck.shift());
-
-    }
+    return (
+        <div >
+            <Form.Field>
+                <Form.Label>Select Your Currencies</Form.Label>
+                <Form.Select id="selectCurrency" onChange={(event) => {
+                    setVal(event.target.value);
+                }}></Form.Select>
+            </Form.Field>
+            <SelectButton callBack={props.callBack} value={testVal} callBack2={props.callBack2} callBack3={props.callBack3} />
+        </div>
+    )
 }
+
+function SelectButton(props) {
+
+
+
+    return (
+        <div>
+            <Button id='menuButton' onClick={() => { props.callBack3() }}>Retrieve accepted Currencies</Button>
+            <Button id='menuButton1' onClick={() => { props.callBack(props.value) }}>Exchange</Button>
+            <Button id='menuButton2' onClick={() => { props.callBack2() }}>Skip</Button>
+        </div>
+    )
+}
+
+export default CurrencySelect;

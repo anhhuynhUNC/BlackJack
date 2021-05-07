@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import ShowCard from './CardReal'
 import Hand from './Hand';
 import Card from './Card';
-import { Button } from 'react-bulma-components';
+import { Button, Form,Field } from 'react-bulma-components';
 
 function CurrencySelect(props) {
     let select = document.createElement('select');
-   // let list = select.options;
+    // let list = select.options;
     // console.log(props.currencies)
     // for(let i = 0; i < props.currencies.length; i ++){
     //     let option = document.createElement('option');
@@ -18,28 +18,30 @@ function CurrencySelect(props) {
     //     select.add(option)
     // }
     let x = 10;
-    let [testVal,setVal] = useState("AED");
+    let [testVal, setVal] = useState("AED");
 
     return (
         <div >
-            <label>Select Your Currencies</label>
-            <select id = "selectCurrency" onChange={(event)=>{
-                setVal(event.target.value);
-            }}></select>
-            <SelectButton callBack={props.callBack} value ={testVal} callBack2 ={props.callBack2} callBack3={props.callBack3}/> 
+            <Form.Field>
+                <Form.Label>Select Your Currencies</Form.Label>
+                <Form.Select id="selectCurrency" onChange={(event) => {
+                    setVal(event.target.value);
+                }}></Form.Select>
+            </Form.Field>
+            <SelectButton callBack={props.callBack} value={testVal} callBack2={props.callBack2} callBack3={props.callBack3} />
         </div>
     )
 }
 
-function SelectButton(props){
-    
-    
-    
+function SelectButton(props) {
+
+
+
     return (
         <div>
-            <Button onClick={()=>{props.callBack3() }}>Retrieve accepted Currencies</Button>
-        <Button onClick={() => {props.callBack(props.value)}}>Exchange</Button>
-        <Button onClick ={() => {props.callBack2()}}>Skip</Button>
+            <Button id='menuButton' onClick={() => { props.callBack3() }}>Retrieve accepted Currencies</Button>
+            <Button id='menuButton1' onClick={() => { props.callBack(props.value) }}>Exchange</Button>
+            <Button id='menuButton2' onClick={() => { props.callBack2() }}>Skip</Button>
         </div>
     )
 }
