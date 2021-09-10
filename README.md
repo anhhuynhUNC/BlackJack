@@ -1,4 +1,6 @@
-Black Jack game for Comp-426 Final
+Black Jack game
+
+Link: https://comp426-74893.web.app/
 
 Hi! This is just a quick guide for my web page. This is a Black Jack game, but with a few modifications to betting and hand calculations, but the essential gameplay of Black Jack is unchanged.
 
